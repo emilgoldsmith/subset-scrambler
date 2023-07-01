@@ -1,6 +1,13 @@
 import Cube from "cubejs";
 import _ from "lodash";
 
+async function init() {
+  Cube.initSolver();
+  document.querySelector("#status").textContent = "Ready";
+}
+
+init();
+
 document.getElementById("scramble-button").onclick = scramble;
 
 async function scramble() {
