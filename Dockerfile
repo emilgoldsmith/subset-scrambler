@@ -8,7 +8,13 @@ RUN yarn
 
 RUN yarn parcel build index.html
 
+FROM node:20-alpine
+
+WORKDIR /app
+
 RUN yarn add serve
+
+COPY --from=0 /app/dist dist
 
 ENTRYPOINT ["/app/node_modules/.bin/serve"]
 
