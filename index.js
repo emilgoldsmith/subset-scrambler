@@ -10,6 +10,8 @@ init();
 
 document.getElementById("scramble-button").onclick = scramble;
 
+console.log(Cube.random().toJSON());
+
 async function scramble() {
   let cube = new Cube();
   while (cube.isSolved()) {
@@ -21,49 +23,95 @@ async function scramble() {
 
 async function getScrambledCube() {
   const solvedCube = new Cube();
-  const numPieces = document.querySelector("#num-pieces").value;
-  let possibleIndices = [];
-  const possibleNumToFlip = [];
-  for (let i = 0; i <= numPieces; i++) {
-    if (i < numPieces) {
-      possibleIndices.push(i);
-    }
-    if (i % 2 === 0) {
-      possibleNumToFlip.push(i);
-    }
-  }
+  const numEdgePieces = document.getElementById("num-edge-pieces").value;
+  const numCornerPieces = document.getElementById("num-corner-pieces").value;
   let ep = [];
   for (let i = 0; i < 12; i++) {
     ep.push(i);
   }
-  function doCycle() {
-    const piecesToCycle = _.shuffle(possibleIndices).slice(0, 3);
-    const [one, two, three] = piecesToCycle;
-    const temp = ep[one];
-    ep[one] = ep[two];
-    ep[two] = ep[three];
-    ep[three] = temp;
-  }
-  for (let i = 0; i < _.random(100, 999); i++) {
-    doCycle();
-  }
-  console.log("ep", ep);
-  console.log("initial possible indices", JSON.stringify(possibleIndices));
-  console.log("possibleNumToFlip", possibleNumToFlip);
-  possibleIndices = _.shuffle(possibleIndices);
-  console.log("possibleIndices", JSON.stringify(possibleIndices));
-  const numToFlip = _.sample(possibleNumToFlip);
-  console.log("numToFlip", numToFlip);
   const eo = new Array(12).fill(0);
-  console.log("initial eo", JSON.stringify(eo));
-  for (const x of possibleIndices.slice(0, numToFlip)) {
-    eo[x] = 1;
-  }
+  console.log("ep", JSON.stringify(ep));
   console.log("eo", JSON.stringify(eo));
+  let cp = [];
+  for (let i = 0; i < 8; i++) {
+    cp.push(i);
+  }
+  const co = new Array(8).fill(0);
+  if (numEdgePieces) {
+    for (let i = 0; i < _.random(100, 999); i++) {
+      cycleThreeEdges();
+      flipTwoEdges();
+    }
+  }
+  if (numCornerPieces) {
+    for (let i = 0; i < _.random(100, 999); i++) {
+      cycleThreeCorners();
+      twistTwoCorners();
+    }
+  }
   const cube = new Cube({
     ...solvedCube.toJSON(),
+    cp,
+    co,
     ep,
     eo,
   });
   return cube;
+  function cycleThreeEdges() {
+    let firstIndex = 0;
+    let secondIndex = 0;
+    let thirdIndex = 0;
+    while (_.uniq([firstIndex, secondIndex, thirdIndex]).length !== 3) {
+      firstIndex = _.random(0, numEdgePieces - 1);
+      secondIndex = _.random(0, numEdgePieces - 1);
+      thirdIndex = _.random(0, numEdgePieces - 1);
+    }
+    const temp = ep[firstIndex];
+    ep[firstIndex] = ep[secondIndex];
+    ep[secondIndex] = ep[thirdIndex];
+    ep[thirdIndex] = temp;
+  }
+  function flipTwoEdges() {
+    let firstIndex = 0;
+    let secondIndex = 0;
+    while (firstIndex === secondIndex) {
+      firstIndex = _.random(0, numEdgePieces - 1);
+      secondIndex = _.random(0, numEdgePieces - 1);
+    }
+    flipEdgeIndex(firstIndex);
+    flipEdgeIndex(secondIndex);
+  }
+  function flipEdgeIndex(index) {
+    eo[index] = (eo[index] + 1) % 2;
+  }
+  function cycleThreeCorners() {
+    let firstIndex = 0;
+    let secondIndex = 0;
+    let thirdIndex = 0;
+    while (_.uniq([firstIndex, secondIndex, thirdIndex]).length !== 3) {
+      firstIndex = _.random(0, numCornerPieces - 1);
+      secondIndex = _.random(0, numCornerPieces - 1);
+      thirdIndex = _.random(0, numCornerPieces - 1);
+    }
+    const temp = cp[firstIndex];
+    cp[firstIndex] = cp[secondIndex];
+    cp[secondIndex] = cp[thirdIndex];
+    cp[thirdIndex] = temp;
+  }
+  function twistTwoCorners() {
+    let firstIndex = 0;
+    let secondIndex = 0;
+    while (firstIndex === secondIndex) {
+      firstIndex = _.random(0, numCornerPieces - 1);
+      secondIndex = _.random(0, numEdgePieces - 1);
+    }
+    twistCornerClockwise(firstIndex);
+    twistCornerCounterClockwise(secondIndex);
+  }
+  function twistCornerClockwise(index) {
+    co[index] = (co[index] + 1) % 3;
+  }
+  function twistCornerCounterClockwise(index) {
+    co[index] = (co[index] + 2) % 3;
+  }
 }
