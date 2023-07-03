@@ -32,6 +32,8 @@ async function getScrambledCube() {
   const eo = new Array(12).fill(0);
   console.log("ep", JSON.stringify(ep));
   console.log("eo", JSON.stringify(eo));
+  console.log("cp", JSON.stringify(cp));
+  console.log("co", JSON.stringify(co));
   let cp = [];
   for (let i = 0; i < 8; i++) {
     cp.push(i);
@@ -49,6 +51,10 @@ async function getScrambledCube() {
       twistTwoCorners();
     }
   }
+  console.log("ep", JSON.stringify(ep));
+  console.log("eo", JSON.stringify(eo));
+  console.log("cp", JSON.stringify(cp));
+  console.log("co", JSON.stringify(co));
   const cube = new Cube({
     ...solvedCube.toJSON(),
     cp,
@@ -103,7 +109,7 @@ async function getScrambledCube() {
     let secondIndex = 0;
     while (firstIndex === secondIndex) {
       firstIndex = _.random(0, numCornerPieces - 1);
-      secondIndex = _.random(0, numEdgePieces - 1);
+      secondIndex = _.random(0, numCornerPieces - 1);
     }
     twistCornerClockwise(firstIndex);
     twistCornerCounterClockwise(secondIndex);
