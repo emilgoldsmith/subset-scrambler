@@ -32,13 +32,13 @@ async function getScrambledCube() {
   const eo = new Array(12).fill(0);
   console.log("ep", JSON.stringify(ep));
   console.log("eo", JSON.stringify(eo));
-  console.log("cp", JSON.stringify(cp));
-  console.log("co", JSON.stringify(co));
   let cp = [];
   for (let i = 0; i < 8; i++) {
     cp.push(i);
   }
   const co = new Array(8).fill(0);
+  console.log("cp", JSON.stringify(cp));
+  console.log("co", JSON.stringify(co));
   if (numEdgePieces) {
     for (let i = 0; i < _.random(100, 999); i++) {
       cycleThreeEdges();
