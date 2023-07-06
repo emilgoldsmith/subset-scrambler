@@ -25,6 +25,7 @@ async function getScrambledCube() {
   const solvedCube = new Cube();
   const numEdgePieces = document.getElementById("num-edge-pieces").value;
   const numCornerPieces = document.getElementById("num-corner-pieces").value;
+  const forceParity = document.getElementById("force-parity").checked;
   let ep = [];
   for (let i = 0; i < 12; i++) {
     ep.push(i);
@@ -39,6 +40,14 @@ async function getScrambledCube() {
   const co = new Array(8).fill(0);
   console.log("cp", JSON.stringify(cp));
   console.log("co", JSON.stringify(co));
+  if (forceParity) {
+    // Do a 2 swap on both edges and corners, the permutation and orientation
+    // will be randomized later
+    ep[0] = 1;
+    ep[1] = 0;
+    cp[0] = 1;
+    cp[1] = 0;
+  }
   if (numEdgePieces) {
     for (let i = 0; i < _.random(100, 999); i++) {
       cycleThreeEdges();
