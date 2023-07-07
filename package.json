@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "build": "rm -rf dist; parcel build index.html"
+  },
   "devDependencies": {
     "parcel": "^2.9.3"
   },
